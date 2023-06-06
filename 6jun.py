@@ -5,6 +5,9 @@ from tarjetaSube import (
     UsuarioDesactivadoException, 
     EstadoNoExistenteException,
     PRIMARIO,
+    SECUNDARIO,
+    UNIVERSITARIO,
+    JUBILADO,
     PRECIO_TICKET,
     Sube,
     DESACTIVADO,
@@ -94,6 +97,18 @@ class TestSube(unittest.TestCase):
 
         with self.assertRaises(EstadoNoExistenteException):
             self.sube.cambiar_estado(estado)
+
+    def test_pagar_pasaje_con_grupo_beneficiario_secundario(self):
+        sube = Sube()
+        sube.saldo = 42
+        sube.grupo_beneficiario = SECUNDARIO
+        
+        sube.pagar_pasaje()
+
+        self.assertEqual(
+            sube.saldo,
+            0,
+        )
             
 
 if __name__ == '__main__':

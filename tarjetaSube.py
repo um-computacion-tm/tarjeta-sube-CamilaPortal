@@ -3,6 +3,16 @@ ACTIVADO= "activado"
 DESACTIVADO= "desactivado"
 PRECIO_TICKET = 70
 PRIMARIO= "primario"
+SECUNDARIO = "secundario"
+UNIVERSITARIO = "universitario"
+JUBILADO = "jubilado"
+
+DESCUENTOS = {
+    PRIMARIO: 0.5,
+    SECUNDARIO: 0.4,
+    UNIVERSITARIO: 0.3,
+    JUBILADO: 0.25,
+}
 
 class NoHaySaldoException(Exception):
     pass
@@ -20,31 +30,21 @@ class Sube:
         self.estado = ACTIVADO
 
     def obtener_precio_ticket(self):
-
-        if self.grupo_beneficiario == None:
+        if self.grupo_beneficiario != None:
+            precio = PRECIO_TICKET-(PRECIO_TICKET * DESCUENTOS[self.grupo_beneficiario])
+        else:
             precio = PRECIO_TICKET
-        
-        if self.grupo_beneficiario == PRIMARIO:
-            precio = (PRECIO_TICKET*0.5)
 
         return precio
     
     def pagar_pasaje(self):
 
+        if self.saldo < self.obtener_precio_ticket():
+            raise NoHaySaldoException()
         if self.estado == DESACTIVADO:
             raise UsuarioDesactivadoException()
-
-        if self.grupo_beneficiario == None:
-            if self.saldo < PRECIO_TICKET:
-                raise NoHaySaldoException()
-            else:
-                self.saldo -= PRECIO_TICKET
-
-        if self.grupo_beneficiario == PRIMARIO:
-            if self.saldo < (PRECIO_TICKET*0.5):
-                raise NoHaySaldoException()
-            else:
-                self.saldo -= (PRECIO_TICKET*0.5)
+        
+        self.saldo -= self.obtener_precio_ticket()
 
     def cambiar_estado(self, estado):
 
